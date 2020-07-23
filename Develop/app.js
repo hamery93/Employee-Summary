@@ -9,27 +9,145 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const employees = [];
 
 
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
 
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
+//  Inquirer prompt
+function promptUser() {
+    return inquirer.prompt({
+            type: "list",
+            message: "Chose employee type",
+            name: "type",
+            choices: ["Manager", "Engineer", "Intern","All employees have been entered"]
+        })
+        .then(function (answers) {
+            switch (answers.type) {
+                case "Manager":
+                    createManager();
+                    break;
+                case "Engineer":
+                    createEngineer();
+                    break;
+                case "Intern":
+                    createIntern();
+                    break;
+                case "All employees have been entered":
+                    renderHtml();
+                    break;
 
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
+            }
+        })
+}
 
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
+// * Make a Manager Employee 
+function createManager() {
+    return inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter name of manager",
+            name: "name"
+         },
+         {
+            type: "input",
+            message: "Enter manager's ID number",
+            name: "id"
+         },
+         {
+            type: "input",
+            message: "Enter manager's email address",
+            name: "email"
+         },
+         {
+            type: "input",
+            message: "Enter manager's office number",
+            name: "officeNumber"
+         },
+    ])
+    .then(function({name, id, email, officeNumber}){
+       
+       const manager = new Manager(name, id, email, officeNumber)
+       employees.push(manager);
 
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
+       promptUser();
+    })
+}
+
+
+function createEngineer() {
+    return inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter engineer's name",
+            name: "name"
+         },
+         {
+            type: "input",
+            message: "Enter engineer's ID number",
+            name: "id"
+         },
+         {
+            type: "input",
+            message: "Enter engineer's email address",
+            name: "email"
+         },
+         {
+            type: "input",
+            message: "Enter Github username for Engineer",
+            name: "userName"
+         },
+    ])
+    .then(function({name, id, email, userName}){
+       
+       const engineer = new Engineer(name, id, email, userName)
+       employees.push(engineer);
+
+       promptUser();
+    })
+}
+
+
+function createIntern() {
+    return inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter intern's name",
+            name: "name"
+         },
+         {
+            type: "input",
+            message: "Enter intern's ID number",
+            name: "id"
+         },
+         {
+            type: "input",
+            message: "Enter intern's email address",
+            name: "email"
+         },
+         {
+            type: "input",
+            message: "Enter name of intern's school",
+            name: "school"
+         },
+    ])
+    .then(function({name, id, email, school}){
+       
+       const intern = new Intern(name, id, email, school)
+       employees.push(intern);
+
+       promptUser();
+    })
+}
+
+// Creates HTML
+function renderHtml() {
+    fs.writeFileSync(outputPath, render(employees)) 
+
+    console.log("Successfully wrote to file");
+    
+}
+
+
+promptUser();
+
+
