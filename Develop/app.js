@@ -40,7 +40,7 @@ function promptUser() {
         })
 }
 
-// * Make a Manager Employee 
+
 function createManager() {
     return inquirer.prompt([
         {
